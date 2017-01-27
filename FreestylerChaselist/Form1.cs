@@ -22,10 +22,16 @@ namespace FreestylerChaselist
         System.Drawing.Font selectedFont;
         string[] loadedNames;
         int rootChannel = 0;
+        bool isPlaying = false;
+        int currentlyPlaying = -1;
+        List<Chase> chaseList;
 
         public Form1()
         {
             InitializeComponent();
+
+            //Create the chaseList
+            chaseList = new List<Chase>();
 
             //Create the fonts
             unselectedFont = new System.Drawing.Font("Microsoft Sans Serif", 8, System.Drawing.FontStyle.Regular);
@@ -71,46 +77,57 @@ namespace FreestylerChaselist
         {
             projectName = projectNameTextbox.Text;
 
-            //Check if the chaselist folder exists
-            if (!Directory.Exists(""+rootFolder+projectName))
+            if (projectName != "")
             {
-                Directory.CreateDirectory("" + rootFolder + projectName);
-            }
-
-            //Check if the chaselist file exists
-            if (!File.Exists(""+rootFolder+projectName+"/"+projectName+".chl"))
-            {
-                File.Create("" + rootFolder + projectName + "/" + projectName + ".chl").Dispose();
-            } else
-            {
-                string path = rootFolder + projectName + "/" + projectName + ".chl";
-                string line = "";
-                listView1.Items.Clear();
-                loadedNames = new string[20];
-
-                using (System.IO.StreamReader file =
-                new System.IO.StreamReader(path))
+                //Check if the chaselist folder exists
+                if (!Directory.Exists("" + rootFolder + projectName))
                 {
-                    while((line = file.ReadLine()) != null)
+                    Directory.CreateDirectory("" + rootFolder + projectName);
+                }
+
+                //Check if the chaselist file exists
+                if (!File.Exists("" + rootFolder + projectName + "/" + projectName + ".chl"))
+                {
+                    File.Create("" + rootFolder + projectName + "/" + projectName + ".chl").Dispose();
+                }
+                else
+                {
+                    string path = rootFolder + projectName + "/" + projectName + ".chl";
+                    string line = "";
+                    listView1.Items.Clear();
+                    chaseList.Clear();
+                    currentlyPlaying = -1;
+                    loadedNames = new string[20];
+
+                    using (System.IO.StreamReader file =
+                    new System.IO.StreamReader(path))
                     {
-                        string[] args = line.Split(';');
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            string[] args = line.Split(';');
 
-                        byte optionsByte = byte.Parse(args[3]);
-                        string optionsString = "";
-                        if (IsBitSet(optionsByte, 3)) optionsString += "A"; else optionsString += ".";
-                        if (IsBitSet(optionsByte, 2)) optionsString += "E"; else optionsString += ".";
-                        if (IsBitSet(optionsByte, 1)) optionsString += "L"; else optionsString += ".";
+                            byte optionsByte = byte.Parse(args[3]);
+                            string optionsString = "";
+                            if (IsBitSet(optionsByte, 3)) optionsString += "A"; else optionsString += "."; //Random
+                            if (IsBitSet(optionsByte, 2)) optionsString += "E"; else optionsString += "."; //Reverse
+                            if (!IsBitSet(optionsByte, 1)) optionsString += "L"; else optionsString += "."; //Loop (inverted)
+                            int chaseId = int.Parse(args[0]);
 
-                        string timeString = args[4] + "ms";
-
-                        string[] row = { args[1], args[2], optionsString, timeString };
-                        listView1.Items.Add(args[0]).SubItems.AddRange(row);
+                            Chase newChase = new Chase(args[1], args[2], optionsString, int.Parse(args[4]));
+                            chaseList.Insert(chaseId, newChase);
+                        }
                     }
                 }
-            }
 
-            //Enable the saveButton
-            saveProjectButton.Enabled = true;
+                //Update the listview
+                updateListView();
+
+                //Enable the saveButton
+                saveProjectButton.Enabled = true;
+                playChaseButton.Enabled = true;
+                stopChaseButton.Enabled = true;
+
+            }
         }
 
         private void saveProjectButton_Click(object sender, EventArgs e)
@@ -123,9 +140,45 @@ namespace FreestylerChaselist
                 using (System.IO.StreamWriter file =
                 new System.IO.StreamWriter(path))
                 {
-                    file.WriteLine("Lorem");
-                    file.WriteLine("Ipsum");
+                    for (int id = 0; id < chaseList.Count; id++)
+                    {
+                        string str = "";
+                        Chase chase = chaseList[id];
+
+                        str += id + ";";
+                        str += chase.name + ";";
+                        str += chase.cue + ";";
+                        str += optionsStringToByte(chase.optionsString) + ";";
+                        str += "" + chase.time;
+
+                        file.WriteLine(str);
+                    }
                 }
+            }
+        }
+
+        private byte optionsStringToByte(string str)
+        {
+            byte ret = 0;
+
+            if (str.Contains("A")) ret += 8; //Random
+            if (str.Contains("E")) ret += 4; //Reverse
+            if (!str.Contains("L")) ret += 2; //Loop (inverted)
+
+            return ret;
+        }
+
+        public void updateListView()
+        {
+            listView1.Items.Clear();
+
+            for (int id = 0; id < chaseList.Count; id++)
+            {
+                Chase chase = chaseList[id];
+                string timeString = chase.time + "ms";
+
+                string[] row = { chase.name, chase.cue, chase.optionsString, timeString };
+                listView1.Items.Add(""+id).SubItems.AddRange(row);
             }
         }
 
@@ -141,9 +194,89 @@ namespace FreestylerChaselist
 
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            playSelectedChase();
+            int chaseId = listView1.SelectedIndices[0];
+            playChase(chaseId);
         }
 
+        public void playChase(int chaseId)
+        {
+            //Reset the colors
+            resetListViewColors();
+
+            //Get the chase info
+            Chase chase = chaseList[chaseId];
+            string chaseName = chase.name;
+            string cue = chase.cue;
+            string optionsString = chase.optionsString;
+            byte options = optionsStringToByte(optionsString);
+            int time = chase.time;
+
+            int channel = rootChannel + (chaseId % 2); //Even chases go into channel 0; Odd numbered into channel 1
+            int nextChannel = rootChannel + ((chaseId + 1) % 2); //Even chases go into channel 0; Odd numbered into channel 1
+
+            //Set the cue label
+            cueLabel.Text = "Cue: " + cue;
+
+            //Check if the chase is loaded
+            if (loadedNames[channel] != chaseName)
+            {
+                //Load the chase
+                loadChase(chaseId, projectName, chaseName, options);
+            }
+
+            //Preload the next chase
+            if (chaseId < chaseList.Count - 1)
+            {
+                //Get the next index
+                int nextIndex = chaseId + 1;
+
+                //Get the name of the next chase
+                string nextChaseName = chaseList[chaseId+1].name;
+                string nextOptionsString = chaseList[chaseId + 1].optionsString;
+                byte nextOptions = optionsStringToByte(nextOptionsString);
+
+                //Check if the chase is loaded
+                if (loadedNames[nextChannel] != nextChaseName)
+                {
+                    //Load the chase
+                    loadChase(nextIndex, projectName, nextChaseName, nextOptions);
+                }
+            }
+
+            //Play the chase
+            FreestylerConnection.sender.sendCommandFunction(505 + channel, 1); //Start
+            FreestylerConnection.sender.sendCommandFunction(525 + nextChannel, 1); //Stop
+
+            //Set the booleans
+            isPlaying = true;
+            currentlyPlaying = chaseId;
+
+            //Adjust the UI
+            setUIMode("Playing");
+
+            ListViewItem listViewChase = listView1.Items[chaseId];
+
+            //Set the color
+            listViewChase.BackColor = Color.Green;
+            listViewChase.Font = selectedFont;
+            listViewChase.Selected = true;
+            //listView1.Select();
+        }
+
+        public void setUIMode(string status)
+        {
+            if (status == "Playing")
+            {
+                openProjectButton.Enabled = false;
+                saveProjectButton.Enabled = false;
+            } else if (status == "Stop")
+            {
+                openProjectButton.Enabled = true;
+                saveProjectButton.Enabled = true;
+            }
+        }
+
+        [Obsolete("playSelectedChase is deprecated, please use playChase(index) instead.")]
         public void playSelectedChase()
         {
             //Reset the colors
@@ -206,6 +339,40 @@ namespace FreestylerChaselist
             {
                 chase.BackColor = Color.White;
                 chase.Font = unselectedFont;
+                chase.Selected = false;
+            }
+        }
+
+        private void playChaseButton_Click(object sender, EventArgs e)
+        {
+            if (currentlyPlaying+1 < chaseList.Count)
+            {
+                playChase(currentlyPlaying+1);
+            }
+        }
+
+        private void stopChaseButton_Click(object sender, EventArgs e)
+        {
+            if (isPlaying == true)
+            {
+                //What channels needs to be stopped
+                int channel = rootChannel + (currentlyPlaying % 2); //Even chases go into channel 0; Odd numbered into channel 1
+
+                //Stop the chase
+                FreestylerConnection.sender.sendCommandFunction(525 + channel, 1); //Stop
+
+                resetListViewColors();
+
+                isPlaying = false;
+
+                ListViewItem listViewChase = listView1.Items[currentlyPlaying];
+                currentlyPlaying--;
+
+                //Set the color
+                listViewChase.Selected = true;
+                listView1.Select();
+
+                setUIMode("Stop");
             }
         }
     }

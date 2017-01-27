@@ -41,12 +41,14 @@
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cueLabel = new System.Windows.Forms.Label();
+            this.playChaseButton = new System.Windows.Forms.Button();
+            this.stopChaseButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // openProjectButton
             // 
-            this.openProjectButton.Location = new System.Drawing.Point(255, 10);
+            this.openProjectButton.Location = new System.Drawing.Point(361, 10);
             this.openProjectButton.Name = "openProjectButton";
             this.openProjectButton.Size = new System.Drawing.Size(57, 23);
             this.openProjectButton.TabIndex = 1;
@@ -72,7 +74,7 @@
             // 
             // projectNameTextbox
             // 
-            this.projectNameTextbox.Location = new System.Drawing.Point(87, 12);
+            this.projectNameTextbox.Location = new System.Drawing.Point(193, 12);
             this.projectNameTextbox.Name = "projectNameTextbox";
             this.projectNameTextbox.Size = new System.Drawing.Size(162, 20);
             this.projectNameTextbox.TabIndex = 3;
@@ -80,7 +82,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 15);
+            this.label1.Location = new System.Drawing.Point(118, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 4;
@@ -89,7 +91,7 @@
             // saveProjectButton
             // 
             this.saveProjectButton.Enabled = false;
-            this.saveProjectButton.Location = new System.Drawing.Point(318, 10);
+            this.saveProjectButton.Location = new System.Drawing.Point(424, 10);
             this.saveProjectButton.Name = "saveProjectButton";
             this.saveProjectButton.Size = new System.Drawing.Size(57, 23);
             this.saveProjectButton.TabIndex = 5;
@@ -153,17 +155,41 @@
             // cueLabel
             // 
             this.cueLabel.AutoSize = true;
-            this.cueLabel.Location = new System.Drawing.Point(15, 41);
+            this.cueLabel.Location = new System.Drawing.Point(118, 41);
             this.cueLabel.Name = "cueLabel";
             this.cueLabel.Size = new System.Drawing.Size(32, 13);
             this.cueLabel.TabIndex = 7;
             this.cueLabel.Text = "Cue: ";
+            // 
+            // playChaseButton
+            // 
+            this.playChaseButton.Enabled = false;
+            this.playChaseButton.Location = new System.Drawing.Point(12, 12);
+            this.playChaseButton.Name = "playChaseButton";
+            this.playChaseButton.Size = new System.Drawing.Size(44, 44);
+            this.playChaseButton.TabIndex = 8;
+            this.playChaseButton.Text = "PLAY";
+            this.playChaseButton.UseVisualStyleBackColor = true;
+            this.playChaseButton.Click += new System.EventHandler(this.playChaseButton_Click);
+            // 
+            // stopChaseButton
+            // 
+            this.stopChaseButton.Enabled = false;
+            this.stopChaseButton.Location = new System.Drawing.Point(62, 12);
+            this.stopChaseButton.Name = "stopChaseButton";
+            this.stopChaseButton.Size = new System.Drawing.Size(44, 44);
+            this.stopChaseButton.TabIndex = 9;
+            this.stopChaseButton.Text = "STOP";
+            this.stopChaseButton.UseVisualStyleBackColor = true;
+            this.stopChaseButton.Click += new System.EventHandler(this.stopChaseButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(554, 261);
+            this.Controls.Add(this.stopChaseButton);
+            this.Controls.Add(this.playChaseButton);
             this.Controls.Add(this.cueLabel);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.saveProjectButton);
@@ -171,6 +197,10 @@
             this.Controls.Add(this.projectNameTextbox);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.openProjectButton);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(570, 300);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(570, 300);
             this.Name = "Form1";
             this.Text = "Freestyler Chaselist";
             this.TopMost = true;
@@ -195,6 +225,8 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Label cueLabel;
+        private System.Windows.Forms.Button playChaseButton;
+        private System.Windows.Forms.Button stopChaseButton;
     }
 }
 
