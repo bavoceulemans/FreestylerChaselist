@@ -251,6 +251,13 @@ namespace FreestylerChaselist
             isPlaying = true;
             currentlyPlaying = chaseId;
 
+            //Set the timer
+            if (time > 0)
+            {
+                timer1.Interval = time;
+                timer1.Enabled = true;
+            }
+
             //Adjust the UI
             setUIMode("Playing");
 
@@ -269,10 +276,12 @@ namespace FreestylerChaselist
             {
                 openProjectButton.Enabled = false;
                 saveProjectButton.Enabled = false;
+                this.ControlBox = false; //Hide exit button
             } else if (status == "Stop")
             {
                 openProjectButton.Enabled = true;
                 saveProjectButton.Enabled = true;
+                this.ControlBox = true; //Show exit button
             }
         }
 
@@ -373,6 +382,25 @@ namespace FreestylerChaselist
                 listView1.Select();
 
                 setUIMode("Stop");
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Enabled = false;
+
+            if (currentlyPlaying + 1 < chaseList.Count)
+            {
+                playChase(currentlyPlaying + 1);
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (isPlaying == true)
+            {
+                e.Cancel = true;
+                MessageBox.Show("A chase is still playing!");
             }
         }
     }

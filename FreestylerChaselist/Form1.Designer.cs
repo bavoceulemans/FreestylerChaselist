@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.openProjectButton = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.connectionStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -43,6 +44,7 @@
             this.cueLabel = new System.Windows.Forms.Label();
             this.playChaseButton = new System.Windows.Forms.Button();
             this.stopChaseButton = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -183,6 +185,10 @@
             this.stopChaseButton.UseVisualStyleBackColor = true;
             this.stopChaseButton.Click += new System.EventHandler(this.stopChaseButton_Click);
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,11 +205,11 @@
             this.Controls.Add(this.openProjectButton);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(570, 300);
-            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(570, 300);
             this.Name = "Form1";
             this.Text = "Freestyler Chaselist";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -227,6 +233,7 @@
         private System.Windows.Forms.Label cueLabel;
         private System.Windows.Forms.Button playChaseButton;
         private System.Windows.Forms.Button stopChaseButton;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
