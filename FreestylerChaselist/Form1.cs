@@ -23,6 +23,7 @@ namespace FreestylerChaselist
         string[] loadedNames;
         int rootChannel = 0;
         bool isPlaying = false;
+        bool hasChanged = false;
         int currentlyPlaying = -1;
         List<Chase> chaseList;
 
@@ -75,9 +76,19 @@ namespace FreestylerChaselist
 
         private void openProjectButton_Click(object sender, EventArgs e)
         {
+            //Check if the project hasnt changed
+            if (hasChanged == true)
+            {
+                DialogResult dialogResult = MessageBox.Show("There are unsaved changes!", "Open Chaselist", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    hasChanged = false;
+                }
+            }
+
             projectName = projectNameTextbox.Text;
 
-            if (projectName != "")
+            if (projectName != "" && hasChanged == false)
             {
                 //Check if the chaselist folder exists
                 if (!Directory.Exists("" + rootFolder + projectName))
@@ -153,6 +164,8 @@ namespace FreestylerChaselist
 
                         file.WriteLine(str);
                     }
+
+                    hasChanged = false;
                 }
             }
         }
@@ -285,7 +298,7 @@ namespace FreestylerChaselist
             }
         }
 
-        [Obsolete("playSelectedChase is deprecated, please use playChase(index) instead.")]
+        [Obsolete("playSelectedChase is deprecated, please use playChase(index) instead.", true)]
         public void playSelectedChase()
         {
             //Reset the colors
@@ -401,6 +414,91 @@ namespace FreestylerChaselist
             {
                 e.Cancel = true;
                 MessageBox.Show("A chase is still playing!");
+            }
+        }
+
+        private void moveChaseUpButton_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int id = listView1.SelectedIndices[0];
+                if (id > 0)
+                {
+                    int tempId = id - 1;
+                    Chase temp = chaseList[tempId];
+                    chaseList[tempId] = chaseList[id];
+                    chaseList[id] = temp;
+
+                    updateListView();
+                    listView1.Items[tempId].Selected = true;
+                    listView1.Select();
+
+                    hasChanged = true;
+                }
+            }
+        }
+
+        private void moveChaseDownButton_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int id = listView1.SelectedIndices[0];
+                if (id < listView1.Items.Count-1)
+                {
+                    int tempId = id + 1;
+                    Chase temp = chaseList[tempId];
+                    chaseList[tempId] = chaseList[id];
+                    chaseList[id] = temp;
+
+                    updateListView();
+                    listView1.Items[tempId].Selected = true;
+                    listView1.Select();
+
+                    hasChanged = true;
+                }
+            }
+        }
+
+        private void deleteChaseButton_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int id = listView1.SelectedIndices[0];
+
+                DialogResult dialogResult = MessageBox.Show("Are you sure?", "Delete Chase", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,MessageBoxDefaultButton.Button2);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    chaseList.RemoveAt(id);
+                    updateListView();
+                    if (id > chaseList.Count - 1)
+                    {
+                        listView1.Items[chaseList.Count - 1].Selected = true;
+                    } else
+                    {
+                        listView1.Items[id].Selected = true;
+                    }
+                    listView1.Select();
+
+                    hasChanged = true;
+                }
+            }
+        }
+
+        private void copyChaseButton_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                int id = listView1.SelectedIndices[0];
+                Chase selected = chaseList[id];
+                Chase newChase = new Chase(selected.name, selected.cue, selected.optionsString, selected.time);
+
+                chaseList.Insert(id, newChase);
+
+                updateListView();
+                listView1.Items[id+1].Selected = true;
+                listView1.Select();
+
+                hasChanged = true;
             }
         }
     }

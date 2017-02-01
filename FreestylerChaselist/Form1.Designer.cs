@@ -45,7 +45,16 @@
             this.playChaseButton = new System.Windows.Forms.Button();
             this.stopChaseButton = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.insertChaseButton = new System.Windows.Forms.Button();
+            this.addChaseButton = new System.Windows.Forms.Button();
+            this.moveChaseUpButton = new System.Windows.Forms.Button();
+            this.moveChaseDownButton = new System.Windows.Forms.Button();
+            this.deleteChaseButton = new System.Windows.Forms.Button();
+            this.editChaseButton = new System.Windows.Forms.Button();
+            this.copyChaseButton = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // openProjectButton
@@ -189,11 +198,95 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.copyChaseButton);
+            this.groupBox1.Controls.Add(this.editChaseButton);
+            this.groupBox1.Controls.Add(this.deleteChaseButton);
+            this.groupBox1.Controls.Add(this.moveChaseDownButton);
+            this.groupBox1.Controls.Add(this.moveChaseUpButton);
+            this.groupBox1.Controls.Add(this.addChaseButton);
+            this.groupBox1.Controls.Add(this.insertChaseButton);
+            this.groupBox1.Location = new System.Drawing.Point(12, 180);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(530, 47);
+            this.groupBox1.TabIndex = 10;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Chase Options";
+            // 
+            // insertChaseButton
+            // 
+            this.insertChaseButton.Location = new System.Drawing.Point(6, 19);
+            this.insertChaseButton.Name = "insertChaseButton";
+            this.insertChaseButton.Size = new System.Drawing.Size(50, 23);
+            this.insertChaseButton.TabIndex = 0;
+            this.insertChaseButton.Text = "Insert";
+            this.insertChaseButton.UseVisualStyleBackColor = true;
+            // 
+            // addChaseButton
+            // 
+            this.addChaseButton.Location = new System.Drawing.Point(62, 19);
+            this.addChaseButton.Name = "addChaseButton";
+            this.addChaseButton.Size = new System.Drawing.Size(46, 23);
+            this.addChaseButton.TabIndex = 1;
+            this.addChaseButton.Text = "Add";
+            this.addChaseButton.UseVisualStyleBackColor = true;
+            // 
+            // moveChaseUpButton
+            // 
+            this.moveChaseUpButton.Location = new System.Drawing.Point(197, 18);
+            this.moveChaseUpButton.Name = "moveChaseUpButton";
+            this.moveChaseUpButton.Size = new System.Drawing.Size(65, 23);
+            this.moveChaseUpButton.TabIndex = 2;
+            this.moveChaseUpButton.Text = "Move Up";
+            this.moveChaseUpButton.UseVisualStyleBackColor = true;
+            this.moveChaseUpButton.Click += new System.EventHandler(this.moveChaseUpButton_Click);
+            // 
+            // moveChaseDownButton
+            // 
+            this.moveChaseDownButton.Location = new System.Drawing.Point(268, 18);
+            this.moveChaseDownButton.Name = "moveChaseDownButton";
+            this.moveChaseDownButton.Size = new System.Drawing.Size(75, 23);
+            this.moveChaseDownButton.TabIndex = 3;
+            this.moveChaseDownButton.Text = "Move Down";
+            this.moveChaseDownButton.UseVisualStyleBackColor = true;
+            this.moveChaseDownButton.Click += new System.EventHandler(this.moveChaseDownButton_Click);
+            // 
+            // deleteChaseButton
+            // 
+            this.deleteChaseButton.Location = new System.Drawing.Point(389, 19);
+            this.deleteChaseButton.Name = "deleteChaseButton";
+            this.deleteChaseButton.Size = new System.Drawing.Size(54, 23);
+            this.deleteChaseButton.TabIndex = 4;
+            this.deleteChaseButton.Text = "Delete";
+            this.deleteChaseButton.UseVisualStyleBackColor = true;
+            this.deleteChaseButton.Click += new System.EventHandler(this.deleteChaseButton_Click);
+            // 
+            // editChaseButton
+            // 
+            this.editChaseButton.Location = new System.Drawing.Point(449, 19);
+            this.editChaseButton.Name = "editChaseButton";
+            this.editChaseButton.Size = new System.Drawing.Size(75, 23);
+            this.editChaseButton.TabIndex = 5;
+            this.editChaseButton.Text = "Edit";
+            this.editChaseButton.UseVisualStyleBackColor = true;
+            // 
+            // copyChaseButton
+            // 
+            this.copyChaseButton.Location = new System.Drawing.Point(114, 19);
+            this.copyChaseButton.Name = "copyChaseButton";
+            this.copyChaseButton.Size = new System.Drawing.Size(48, 23);
+            this.copyChaseButton.TabIndex = 6;
+            this.copyChaseButton.Text = "Copy";
+            this.copyChaseButton.UseVisualStyleBackColor = true;
+            this.copyChaseButton.Click += new System.EventHandler(this.copyChaseButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(554, 261);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.stopChaseButton);
             this.Controls.Add(this.playChaseButton);
             this.Controls.Add(this.cueLabel);
@@ -212,6 +305,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -234,6 +328,14 @@
         private System.Windows.Forms.Button playChaseButton;
         private System.Windows.Forms.Button stopChaseButton;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button moveChaseDownButton;
+        private System.Windows.Forms.Button moveChaseUpButton;
+        private System.Windows.Forms.Button addChaseButton;
+        private System.Windows.Forms.Button insertChaseButton;
+        private System.Windows.Forms.Button deleteChaseButton;
+        private System.Windows.Forms.Button editChaseButton;
+        private System.Windows.Forms.Button copyChaseButton;
     }
 }
 
