@@ -222,6 +222,7 @@
             this.insertChaseButton.TabIndex = 0;
             this.insertChaseButton.Text = "Insert";
             this.insertChaseButton.UseVisualStyleBackColor = true;
+            this.insertChaseButton.Click += new System.EventHandler(this.insertChaseButton_Click);
             // 
             // addChaseButton
             // 
@@ -231,6 +232,7 @@
             this.addChaseButton.TabIndex = 1;
             this.addChaseButton.Text = "Add";
             this.addChaseButton.UseVisualStyleBackColor = true;
+            this.addChaseButton.Click += new System.EventHandler(this.addChaseButton_Click);
             // 
             // moveChaseUpButton
             // 
@@ -270,6 +272,7 @@
             this.editChaseButton.TabIndex = 5;
             this.editChaseButton.Text = "Edit";
             this.editChaseButton.UseVisualStyleBackColor = true;
+            this.editChaseButton.Click += new System.EventHandler(this.editChaseButton_Click);
             // 
             // copyChaseButton
             // 

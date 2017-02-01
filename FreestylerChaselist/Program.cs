@@ -11,6 +11,10 @@ namespace FreestylerChaselist
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        /// 
+
+        public delegate void completeEditDelegate(string name, string cue, string optionsString, int time);
+
         [STAThread]
         static void Main()
         {

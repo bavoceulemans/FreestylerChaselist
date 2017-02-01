@@ -26,6 +26,8 @@ namespace FreestylerChaselist
         bool hasChanged = false;
         int currentlyPlaying = -1;
         List<Chase> chaseList;
+        string editMethod = "";
+        int editId = 0;
 
         public Form1()
         {
@@ -285,15 +287,37 @@ namespace FreestylerChaselist
 
         public void setUIMode(string status)
         {
-            if (status == "Playing")
+            if (status == "Playing" || status == "Edit")
             {
                 openProjectButton.Enabled = false;
                 saveProjectButton.Enabled = false;
+                insertChaseButton.Enabled = false;
+                addChaseButton.Enabled = false;
+                copyChaseButton.Enabled = false;
+                moveChaseDownButton.Enabled = false;
+                moveChaseUpButton.Enabled = false;
+                deleteChaseButton.Enabled = false;
+                editChaseButton.Enabled = false;
                 this.ControlBox = false; //Hide exit button
+
+                if (status == "Edit")
+                {
+                    playChaseButton.Enabled = false;
+                    stopChaseButton.Enabled = false;
+                }
             } else if (status == "Stop")
             {
+                playChaseButton.Enabled = true;
+                stopChaseButton.Enabled = true;
                 openProjectButton.Enabled = true;
                 saveProjectButton.Enabled = true;
+                insertChaseButton.Enabled = true;
+                addChaseButton.Enabled = true;
+                copyChaseButton.Enabled = true;
+                moveChaseDownButton.Enabled = true;
+                moveChaseUpButton.Enabled = true;
+                deleteChaseButton.Enabled = true;
+                editChaseButton.Enabled = true;
                 this.ControlBox = true; //Show exit button
             }
         }
@@ -500,6 +524,74 @@ namespace FreestylerChaselist
 
                 hasChanged = true;
             }
+        }
+
+        public void completeEdit(string name, string cue, string optionsString, int time)
+        {
+            if (editMethod == "EDIT")
+            {
+                Chase ch = chaseList[editId];
+                ch.name = name;
+                ch.cue = cue;
+                ch.optionsString = optionsString;
+                ch.time = time;
+            } else if (editMethod == "INSERT" || editMethod == "ADD")
+            {
+                Chase ch = new Chase(name, cue, optionsString, time);
+                chaseList.Insert(editId, ch);
+            }
+
+            updateListView();
+            setUIMode("Stop");
+            listView1.Items[editId].Selected = true;
+            listView1.Select();
+        }
+
+        private void editChaseButton_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                editMethod = "EDIT";
+                editId = listView1.SelectedIndices[0];
+                setUIMode("Edit");
+
+                //TODO: Open the second form
+            }
+        }
+
+        private void insertChaseButton_Click(object sender, EventArgs e)
+        {
+            editMethod = "INSERT";
+
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                editId = listView1.SelectedIndices[0]-1;
+            } else
+            {
+                editId = 0;
+            }
+
+            setUIMode("Edit");
+
+            //TODO: Open the second form
+        }
+
+        private void addChaseButton_Click(object sender, EventArgs e)
+        {
+            editMethod = "ADD";
+
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                editId = listView1.SelectedIndices[0];
+            }
+            else
+            {
+                editId = 0;
+            }
+
+            setUIMode("Edit");
+
+            //TODO: Open the second form
         }
     }
 }
